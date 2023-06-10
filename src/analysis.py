@@ -1,4 +1,6 @@
 import pandas as pd
+
+
 class Analysis:
     def __init__(self, data) -> None:
         self.data = data
@@ -141,16 +143,35 @@ class Analysis:
                           if v >= n}  # 如果设置大于n就进行筛选
 
         return word_count
-    def group_sentiment(self,rule:str):
+    def group_sentiment(self,period_start:str=None,period_end:str=None,rule:str='M'):
         '''获取群按时间序列的情感分数波动，支持年A，月M，周W,日D，时H，分T，秒S等
-        可以加上数字如15D表示每15天，具体见重采样方法resample,axis=0默认行采样,how默认平均聚合'''
+        可以加上数字如15D表示每15天，具体见重采样方法resample,axis=0默认行采样,how默认平均聚合
+        目前也支持选择时间跨度
+        后续：由于平均会削弱情感，所以应该返回时间段的正面和负面情感数'''
         from snownlp import SnowNLP
         def get_sentiment(sentence):
-            s=SnowNLP(sentence)
-            return s.sentiments
-        df=self.data.query('content not in ("[图片]","[表情]")')#去除只含图片表情的聊天记录
-        df['sentiment']=df['content'].apply(lambda x:get_sentiment(x)) #获取情感得分
-        df=df.resample(rule=rule,on='datetime')[['sentiment']].mean()
+            from numpy import NAN
+            '''认为0.6以上是正面，0.4以下是负面，忽略中性'''
+            s=SnowNLP(sentence).sentiments
+            if s>=0.6:
+                return '正面'
+            elif s<=0.4:
+                return '负面'
+            else:
+                return '中性'
+        df=self.data.query('content not in ("[图片]","[表情]")').copy()#去除只含图片表情的聊天记录
+        df=df.set_index('datetime')
+        if period_start and period_end:
+            df=df.loc[period_start:period_end]
+        elif period_start:
+            df=df.loc[period_start:]
+        else:
+            df=df.loc[:period_end]
+        df['情感分类']=df['content'].apply(lambda x:get_sentiment(x)) #获取情感得分
+        dummies=pd.get_dummies(df['情感分类'])
+        df=df.join(dummies)
+        df=df.drop(['情感分类'],axis='columns')
+        df=df.resample(rule=rule).sum()
         return df
 
     
