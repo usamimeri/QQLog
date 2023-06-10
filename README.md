@@ -26,5 +26,5 @@
 1. 获取每个人的活跃时间，即一日有发言一定次数被视为活跃，可以扩展到一小时即活跃小时数
 3. （较难）分析小团体的形成如@和回复和一个时间段上的互动，并用networkx库等可视化
 
-#示例图片
+# 示例图片
 ![sentiment](https://github.com/usamimeri/QQLog/blob/main/images/junpei.png)
