@@ -13,6 +13,7 @@ analysis=Analysis(data) #初始化分析器
 analysis.key_word_frequency(['避雷','给分']) #用户关键词统计
 analysis.time_frequency(time='weekday') #群按时间的聊天频数统计
 analysis.image_frequency() #发图和表情包统计
+analysis.group_sentiment(period_start='2023-2-10',period_end='2023-5-10',rule='W') #获取2023年2月10日到2023年5月10日之间按周的群情感统计
 analysis.user_content_frequency() #发言次数统计
 analysis.time_most_user(time='hour') #每个时间点发言最多的群友
 word_freq=analysis.word_count(stopwords_path=[],user_dict_path=[],n=30,is_chinese=True) #词频统计，可设置停用词和自定义词，可设置读取多少词频以上的词以及是否只读取中文
