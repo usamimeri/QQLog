@@ -2,6 +2,24 @@
 1. 对QQ群聊天记录进行读取，存入多种格式中（目前支持json）
 2. 对QQ群聊天记录进行分析，提取有价值的信息
 3. 对QQ群聊天记录进行可视化
+
+# 使用案例
+```
+extractor=DialogExtractor('D:\pywork\数据库\聊天记录\厦大选课交流群（思明）.txt')
+extractor.extract_dialog()
+extractor.save_json() #存为json格式数据
+data=extractor.load_json_dataframe() #读取为dataframe
+analysis=Analysis(data) #初始化分析器
+analysis.key_word_frequency(['避雷','给分']) #用户关键词统计
+analysis.time_frequency(time='weekday') #群按时间的聊天频数统计
+analysis.image_frequency() #发图和表情包统计
+analysis.user_content_frequency() #发言次数统计
+analysis.time_most_user(time='hour') #每个时间点发言最多的群友
+word_freq=analysis.word_count(stopwords_path=[],user_dict_path=[],n=30,is_chinese=True) #词频统计，可设置停用词和自定义词，可设置读取多少词频以上的词以及是否只读取中文
+visual=Visualize()
+visual.word_cloud(word_freq) #生成词云图
+visual.simple_visual() #传入之前analysis得到的结果,还有期望的x,y轴的列
+```
 # 工作流
 1. 初始化提取器，传入聊天记录txt文件进行读取，可获取dataframe格式数据以备分析
 2. 初始化分析器，对之前读取的聊天记录进行分析，统一获取dataframe结果
